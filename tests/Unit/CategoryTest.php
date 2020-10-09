@@ -40,7 +40,7 @@ class CategoryTest extends TestCase
 
     public function testDatesAttribute()
     {
-        $category      = new Category();
+    $category      = new Category();
         $dates         = ['deleted_at', 'created_at', 'updated_at'];
         $categoryDates = $category->getDates();
         sort($dates);
