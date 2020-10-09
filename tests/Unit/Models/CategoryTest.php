@@ -46,9 +46,14 @@ class CategoryTest extends TestCase
     {
         $dates         = ['deleted_at', 'created_at', 'updated_at'];
         $categoryDates = $this->freshCategory->getDates();
-        sort($dates);
-        sort($categoryDates);
-        $this->assertEquals($dates, $categoryDates);
+        $this->assertEqualsCanonicalizing($dates, $categoryDates);
+    }
+
+    public function testCastAttribute()
+    {
+        $casts         = ['is_active' => 'boolean'];
+        $categoryCasts = $this->freshCategory->getCasts();
+        $this->assertEqualsCanonicalizing($casts, $categoryCasts);
     }
 
 }
