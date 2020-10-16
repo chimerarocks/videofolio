@@ -6,7 +6,7 @@ steps:
 
   - id: "Setting owner of files"
     name: 'docker'
-    args: ['exec','-t','app','-u', 'root', 'chown -R www-data:www-data /var/www']
+    args: ['exec','-t','-u', 'root','app', 'chown', '-R', 'www-data:www-data', '/var/www']
 
   - id: "Rodando docker ls"
     name: 'docker'
