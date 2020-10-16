@@ -4,6 +4,10 @@ steps:
     name: 'gcr.io/$PROJECT_ID/docker-compose:1.24.0'
     args: ['-f','docker-compose.ci.yaml','up','-d']
 
+  - id: "Rodando docker ls"
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['ls -lash']
+
   - id: "Rodando composer"
     name: 'gcr.io/cloud-builders/docker'
     args: ['exec','-t','app','composer','install']
