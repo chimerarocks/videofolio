@@ -4,6 +4,10 @@ steps:
     name: 'docker/compose'
     args: ['-f','docker-compose.ci.yaml','up','-d']
 
+  - id: "Setting owner of files"
+    name: 'docker'
+    args: ['exec','-t','app','-u', 'root', 'chown -R www-data:www-data /var/www']
+
   - id: "Rodando docker ls"
     name: 'docker'
     args: ['exec','-t','app','ls', '-lash']
