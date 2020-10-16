@@ -2,7 +2,7 @@ steps:
 
   - id: "Rodando docker-compose"
     name: 'docker/compose'
-    args: ['-f','docker-compose.ci.yaml','up','-d']
+    args: ['-u', 'www-data', '-f','docker-compose.ci.yaml','up','-d']
 
   - id: "Setting owner of files"
     name: 'docker'
