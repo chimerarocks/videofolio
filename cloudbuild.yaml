@@ -1,7 +1,7 @@
 steps:
 
   - id: "Rodando docker-compose"
-    name: 'docker-compose'
+    name: 'docker/compose'
     args: ['-f','docker-compose.ci.yaml','up','-d']
 
   - id: "Rodando docker ls"
