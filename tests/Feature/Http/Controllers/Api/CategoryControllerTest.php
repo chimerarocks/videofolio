@@ -6,10 +6,11 @@ use App\Models\Category;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
+use Tests\Traits\TestValidations;
 
 class CategoryControllerTest extends TestCase
 {
-    use DatabaseMigrations;
+    use DatabaseMigrations, TestValidations;
 
     public function testIndex()
     {
@@ -73,36 +74,22 @@ class CategoryControllerTest extends TestCase
     }
 
     public function assertInvalidationRequired(TestResponse $response) {
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name'])
+        $this->assertInvalidationFields($response, ['name'], 'required', []);
+        $response
             ->assertJsonMissingValidationErrors(['is_active'])
-            ->assertJsonFragment([
-                \Lang::get('validation.required', ['attribute' => 'name'])
-            ])
         ;
     }
 
     public function assertInvalidationMax(TestResponse $response) {
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name'])
-            ->assertJsonFragment([
-                \Lang::get('validation.max.string', [
-                    'attribute' => 'name',
-                    'max' => 255
-                ])
-            ])
-        ;
+        $this->assertInvalidationFields(
+            $response, ['name'], 'max.string', ['max' => 255]
+        );
     }
 
     public function assertInvalidationBoolean(TestResponse $response) {
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['is_active'])
-            ->assertJsonFragment([
-                \Lang::get('validation.boolean', [
-                    'attribute' => 'is active'
-                ])
-            ])
-        ;
+        $this->assertInvalidationFields(
+            $response, ['is_active'], 'boolean'
+        );
     }
 
     public function testStore()
@@ -194,5 +181,15 @@ class CategoryControllerTest extends TestCase
             ->assertJsonFragment([
                 'description' => null,
             ]);
+    }
+
+    public function testDestroy() {
+        $category = factory(Category::class)->create();
+        $response = $this->json('DELETE', route('categories.destroy', [
+            'category' => $category->id
+        ]));
+        $response->assertStatus(204);
+        $this->assertNull(Category::find($category->id));
+        $this->assertNotNull(Category::withTrashed()->find($category->id));
     }
 }
