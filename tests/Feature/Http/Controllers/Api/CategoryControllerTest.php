@@ -37,20 +37,24 @@ class CategoryControllerTest extends TestCase
     public function testInvalidationData()
     {
         /**
-         * Validating if is_active is a optiomal and if name is required
+         * Validating if is_active is optional and if name is required
          */
-        $response = $this->json('POST', route('categories.store'), []);
-        $this->assertInvalidationRequired($response);
+        $data = [
+            'name' => ''
+        ];
+        $this->assertInvalidationInStoreAction($data, 'required');
 
         /**
          * Validating if is_active is a boolean and if name respects max limit
          */
-        $response = $this->json('POST', route('categories.store'), [
-            'name'      => str_repeat('a', 256),
+        $data = [
+            'name'      => str_repeat('a', 256)
+        ];
+        $this->assertInvalidationInStoreAction($data, 'max.string', ['max' => 255]);
+        $data = [
             'is_active' => 'a'
-        ]);
-        $this->assertInvalidationMax($response);
-        $this->assertInvalidationBoolean($response);
+        ];
+        $this->assertInvalidationInStoreAction($data, 'boolean');
 
         $category = factory(Category::class)->create();
         $response = $this->json('PUT',
@@ -191,5 +195,10 @@ class CategoryControllerTest extends TestCase
         $response->assertStatus(204);
         $this->assertNull(Category::find($category->id));
         $this->assertNotNull(Category::withTrashed()->find($category->id));
+    }
+
+    protected function routeStore()
+    {
+        return route('categories.store');
     }
 }
