@@ -12,6 +12,8 @@ abstract class BaseCrudController extends Controller
 
     protected abstract function rulesStore();
 
+    protected abstract function rulesUpdate();
+
     public function index()
     {
         return $this->model()::all();
@@ -32,21 +34,24 @@ abstract class BaseCrudController extends Controller
         return $this->model()::where($keyName, $id)->firstOrFail();
     }
 
-    public function show(Category $category) //Route model binding
+    public function show($id)
     {
-        return $category;
+        $model = $this->findOrFail($id);
+        return $model;
     }
 
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
-        $this->validate($request, $this->rules);
-        $category->update($request->all());
-        return $category;
+        $model = $this->findOrFail($id);
+        $validatedData = $this->validate($request, $this->rulesUpdate());
+        $model->update($validatedData);
+        return $model;
     }
 
-    public function destroy(Category $category)
+    public function destroy($id)
     {
-        $category->delete();
+        $model = $this->findOrFail($id);
+        $model->delete();
         return response()->noContent();
     }
 }
