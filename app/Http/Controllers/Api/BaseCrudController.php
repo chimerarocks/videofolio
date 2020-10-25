@@ -10,10 +10,7 @@ abstract class BaseCrudController extends Controller
 {
     protected abstract function model();
 
-    private $rules = [
-        'name' => 'required|max:255',
-        'is_active' => 'boolean'
-    ];
+    protected abstract function rulesStore();
 
     public function index()
     {
@@ -22,10 +19,10 @@ abstract class BaseCrudController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, $this->rules);
-        $category = Category::create($request->all());
-        $category->refresh(); // In order to all fields be returned
-        return $category;
+        $validateData = $this->validate($request, $this->rulesStore());
+        $model = $this->model()::create($validateData);
+        $model->refresh();
+        return $model;
     }
 
     public function show(Category $category) //Route model binding
